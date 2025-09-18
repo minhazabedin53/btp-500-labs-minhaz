@@ -110,7 +110,7 @@ def function1(number):
 ```
 
 * Let **n** be the input size, where **n = number**.
-* Let **T(n)** be the total number of primitive operations executed by `function1` on input **n**.
+* Let **T(n)** be the total number of operations executed by `function1` on input **n**.
 
 ## Counting operations
 
@@ -139,16 +139,18 @@ $$
 T(n) = 1 + n + 1 + 2n + 3n + 1
 $$
 
-## Step 4 — Simplify
+## Simplifying
 
 $$
 T(n) = (1+1+1) + (n + 2n + 3n) = 3 + 6n = 6n + 3
 $$
 
-## Step 5 — Big-O conclusion
+## Big-O conclusion
 
 The dominating term is linear in $n$.
 **Therefore, $T(n) \in O(n)$.**
+
+
 
 
 ### function 2:
@@ -159,6 +161,49 @@ Analyze the following function with respect to number
 def function2(number):
 	return (number * (number + 1) * (2 * number + 1)) // 6
 ```
+
+# Function 2 Answer
+
+## Code under analysis
+
+```python
+def function2(number):
+    return (number * (number + 1) * (2 * number + 1)) // 6
+```
+
+* Let **n** be the input size, where **n = number**.
+* Let **T(n)** be the total number of operations executed by `function2` on input **n**.
+
+## Counting operations
+
+```text
+a = number + 1        # 1 add
+b = 2 * number        # 1 mult
+c = b + 1             # 1 add
+d = number * a        # 1 mult
+e = d * c             # 1 mult
+f = e // 6            # 1 integer division
+return f              # 1
+```
+
+$$
+T(n) = 1+1+1+1+1+1+1 = 7 \quad (\text{a constant})
+$$
+
+## Simplifying
+
+$$
+T(n) = x \quad \text{for some constant } x
+$$
+
+## Big-O conclusion
+
+No loops or recursion; work doesn’t scale with **n**.
+**Therefore, $T(n) \in O(1)$** (constant time).
+
+
+
+
 
 ### function 3:
 
@@ -173,6 +218,75 @@ def function3(list):
 				list[j] = list[j+1]
 				list[j + 1] = tmp
 ```
+
+# Function 3 Answer
+
+## Code under analysis
+
+```python
+def function3(lst):
+    n = len(lst)
+    for i in range(n - 1):
+        for j in range(n - 1 - i):
+            if lst[j] > lst[j + 1]:
+                tmp = lst[j]
+                lst[j] = lst[j + 1]
+                lst[j + 1] = tmp
+```
+
+## Variables & functions
+
+* Let **n = len(lst)** be the input size.
+* Let **T(n)** be the number of primitive operations executed by `function3` on an input of length **n**.
+
+## Count operations
+
+```python
+n = len(lst)                       # 1
+
+for i in range(n - 1):             # outer loop: (n - 1) iterations
+    for j in range(n - 1 - i):     # inner loop: (n - 1 - i) per i
+        if lst[j] > lst[j + 1]:    # 1 comparison each inner iteration
+            tmp = lst[j]           # 1
+            lst[j] = lst[j + 1]    # 1
+            lst[j + 1] = tmp       # 1
+```
+
+Totals across all iterations:
+* **Comparisons:** $\sum_{i=0}^{n-2} (n-1-i) = \frac{n(n-1)}{2}$.
+* **Swaps:** happen only when the `if` is true. Let **S** be the number of swaps.
+  * Each swap has **3** operations so **$3S$**
+
+$$
+T(n) \approx \underbrace{\frac{n(n-1)}{2}} \;+\; \underbrace{3S} \;+\; O(1).
+$$
+
+## Simplifying
+
+* **Worst case** : every comparison does a swap, so $S = \frac{n(n-1)}{2}$.
+
+  $$
+  T_{\text{worst}}(n) \approx \frac{n(n-1)}{2} + 3\cdot\frac{n(n-1)}{2}
+  = 2\,n(n-1) = 2n^2 - 2n \in O(n^2).
+  $$
+* **Best case** : $S = 0$.
+
+  $$
+  T_{\text{best}}(n) \approx \frac{n(n-1)}{2} \in O(n^2).
+  $$
+* **Average case**: expected change $\approx \frac{n(n-1)}{4}$, and bubble sort does one swap per change ⇒ $S \approx \frac{n(n-1)}{4}$.
+
+  $$
+  T_{\text{avg}}(n) \approx \frac{n(n-1)}{2} + 3\cdot\frac{n(n-1)}{4}
+  = \frac{5}{4}\,n(n-1) \in O(n^2).
+  $$
+
+## Big-O conclusion
+
+* **Time complexity:** $O(n^2)$ 
+
+
+
 
 ### function 4:
 
@@ -195,6 +309,132 @@ def function2(mystring):
 
 ```
 
+# Function 4 Answer
+
+```python
+def recursive_function4(mystring,a,b):
+    if (a >= b):
+        return True
+    else:
+        if (mystring[a] != mystring[b]):
+            return False
+        else:
+            return recursive_function4(mystring, a+1, b-1)
+
+def function2(mystring):
+    return recursive_function4(mystring, 0, len(mystring)-1)
+```
+
+---
+
+## Variables & functions
+
+* Let **n = len(mystring)**.
+* Let **T(n)** = number of operations for `function2(mystring)` (the wrapper).
+* Let **R(n)** = number of operations for `recursive_function4(mystring, a, b)` on a string of length **n** (worst case, when recursion continues to the middle).
+
+---
+
+## Counting operations
+
+### For `function2(mystring)`:
+
+```python
+return recursive_function4(mystring, 0, len(mystring)-1)
+```
+
+* `len(mystring)` → 1
+* subtraction `-1` → 1
+* function call overhead → 1
+
+So:
+
+$$
+T(n) = 3 + R(n)
+$$
+
+---
+
+### For `recursive_function4(mystring,a,b)`:
+
+Case 1 — Base case (`a >= b`):
+
+* comparison → 1
+* return True → 1
+
+So:
+$$
+R(1) = R(0) = 2
+$$
+
+Case 2 — Recursive case (`a < b`):
+
+* comparison `a >= b` → 1
+* comparison `mystring[a] != mystring[b]` → 1
+* if equal, recursive call:
+  * preparing arguments (`a+1`, `b-1`) → 2
+  * recursive call itself → R(n-2)
+
+Total:
+
+$$
+1 + 1 + 2 = 4 + R(n-2)
+$$
+
+---
+
+## Build Recurrence
+
+For recursive case:
+
+$$
+R(n) = 4 + R(n-2)
+$$
+
+Base cases:
+
+$$
+R(0) = 2, \quad R(1) = 2
+$$
+
+---
+
+## Solve Recurrence
+
+Expand:
+
+$$
+\begin{aligned}
+R(n) &= 4 + R(n-2) \\
+     &= 4 + (4 + R(n-4)) \\
+     &= 4 + 4 + R(n-4) \\
+     &= 4k + R(n-2k)
+\end{aligned}
+$$
+
+So:
+
+$$
+R(n) = 4 \cdot \frac{n}{2} + 2 = 2n + 2
+$$
+
+---
+
+
+* For `recursive_function4`:
+
+  $$
+  R(n) = 2n + 2 \in O(n)
+  $$
+
+* For `function2`:
+
+  $$
+  T(n) = 3 + R(n) = 3 + (2n + 2) = 2n + 5 \in O(n)
+  $$
+
+* **Final:** Both `function2` and `recursive_function4` run in **O(n)** time
+
 
 ### function 5:
 
@@ -216,7 +456,40 @@ def function5(value, number):
 			return value * result * result
 
 ```
+# Function 5 Answer
 
+```python
+def function5(value, number):
+    if number == 0: return 1
+    elif number == 1: return value
+    else:
+        half = number // 2
+        result = function5(value, half)
+        if number % 2 == 0:
+            return result * result
+        else:
+            return value * result * result
+```
+
+
+* Let **n = number** (the exponent).
+* Let **T(n)** be the time to compute `function5(value, n)`.
+
+* Base cases `n ∈ {0,1}` do **O(1)** work.
+* Otherwise we:
+
+  * Recursively call once on **⌊n/2⌋**,
+  * Do a **constant** amount of local work (a few ops and at most **two multiplications**).
+
+
+$$
+T(n) = T(\lfloor n/2 \rfloor) + O(1), \quad T(0)=T(1)=O(1).
+$$
+
+Each call halves **n**, so we have about **log₂ n** levels. Constant work per level ⇒ total is **O(log n)**.
+
+
+* **Time:** $O(\log n)$
 
 
 ## Submitting your lab
