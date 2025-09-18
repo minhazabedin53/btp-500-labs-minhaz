@@ -94,6 +94,63 @@ def function1(number):
 	return total
 ```
 
+# Function 1 Answer
+
+## Code under analysis
+
+```python
+def function1(number):
+    total = 0
+
+    for i in range(number):
+        x = i + 1
+        total += x * x
+
+    return total
+```
+
+* Let **n** be the input size, where **n = number**.
+* Let **T(n)** be the total number of primitive operations executed by `function1` on input **n**.
+
+## Counting operations
+
+```python
+def function1(number):
+    total = 0                      # 1
+
+    for i in range(number):        # n iterations
+                                  # +1 to create the range (constant)
+        x = i + 1                  # 2·n   (1 add + 1 assign per iteration)
+        total += x * x             # 3·n   (1 mult + 1 add + 1 assign per iteration)
+
+    return total                   # 1
+```
+
+Operation Counts:
+
+* `total = 0` → **1**
+* loop iterations → **n**
+* range creation (constant) → **1**
+* `x = i + 1` inside loop → **2n**
+* `total += x * x` inside loop → **3n**
+* `return total` → **1**
+
+$$
+T(n) = 1 + n + 1 + 2n + 3n + 1
+$$
+
+## Step 4 — Simplify
+
+$$
+T(n) = (1+1+1) + (n + 2n + 3n) = 3 + 6n = 6n + 3
+$$
+
+## Step 5 — Big-O conclusion
+
+The dominating term is linear in $n$.
+**Therefore, $T(n) \in O(n)$.**
+
+
 ### function 2:
 
 Analyze the following function with respect to number
